@@ -1,4 +1,5 @@
 import colorama
+import numpy as np
 
 colorama.init()
 
@@ -7,90 +8,115 @@ def main():
     print(colorama.Back.LIGHTGREEN_EX + "UCAB Elaborado por: Haisa Reyes, Paola Marturet, Gabriel Sousa, Mark D. Vivas")
     print(colorama.Back.RESET)
 
-    print(colorama.Fore.BLUE + "Ingrese las iniciales del primer paciente sin espacios en blanco con 4 letras: ")
-    I1 = input()
-    print(colorama.Fore.CYAN + "Ingrese 5 digitos, siendo los primeros 3 la estatura en cm y los 2 ultimos el peso del paciente 1: ")
-    D1 = int(input()) 
-
-    print(colorama.Fore.LIGHTBLUE_EX +  "Ingrese las iniciales del segundo paciente sin espacios en blanco en 4 letras: ")
-    I2 = input()
-    print(colorama.Fore.LIGHTCYAN_EX + "Ingrese 5 digitos, siendo los primeros 3 la estatura en cm y los 2 ultimos el peso del paciente 2: ")
-    D2 = int(input()) 
+    def LeerArchivo():
+        arch= open("colocar direccion", "rt")
+        lineas = arch.readlines()
+        arch.close
+        return lineas
     
-    print(colorama.Fore.GREEN + "Ingrese las iniciales del tercer paciente sin espacios en blanco en 4 letras: ")
-    I3 = input()
-    print(colorama.Fore.LIGHTGREEN_EX + "Ingrese 5 digitos, siendo los primeros 3 la estatura en cm y los 2 ultimos el peso del paciente 3: ")
-    D3 = int(input()) 
-
-    I1M = I1[0]+I1[2]
-    I2M = I2[0]+I2[2]
-    I3M = I3[0]+I3[2]
-
-    E1 = D1 // 100
-    E1 = E1 / 100
-    P1 = D1 % 100
-
-    E2 = D2 // 100
-    E2 = E2 / 100
-    P2 = D2 % 100
-
-    E3 = D3 // 100
-    E3 = E3 / 100
-    P3 = D3 % 100
-
-    IMC1 = (P1 // E1**2)
-    IMC2 = (P2 // E2**2)
-    IMC3 = (P3 // E3**2)
+    def Iniciales(p):
+        aux= []
+        IM= []
+        for i in range(0, len(p), 1):
+            aux= p[i]
+            IM= IM + [aux[0] + aux[2]]
+        return IM
+    
+    def Peso(pes):
+        P = []
+        aux= 0
+        for i in range(0, len(pes), 1):
+            aux = int(pes[i])
+            P = P + [aux // 1000]
+        return P
     
 
-    print(colorama.Fore.BLUE + "El paciente 1 es ", I1M, ", pesa ", P1, "kg y mide ", E1, " m")
-    print(colorama.Fore.CYAN + "El paciente 2 es ", I2M, ", pesa ", P2, "kg y mide ", E2, " m")
-    print(colorama.Fore.GREEN + "El paciente 3 es ", I3M, ", pesa ", P3, "kg y mide ", E3, " m")
-
-
-    if (IMC1 < 18):
-        print(colorama.Fore.CYAN + "El promedio de IMC del paciente",I1M ,"es de bajo peso")
-    elif ((IMC1 >= 18) and (IMC1 < 25)):
-        print(colorama.Fore.GREEN + "El promedio de IMC del paciente",I1M ,"es de peso normal")
-    elif ((IMC1 >= 25) and (IMC1 < 30)):
-        print(colorama.Fore.MAGENTA + "El promedio de IMC del paciente",I1M ,"es de sobrepeso")
-    elif (IMC1 >= 30):
-        print(colorama.Fore.RED + "El promedio de IMC del paciente",I1M ,"es de obesidad")
-
-
-    if (IMC2 < 18):
-        print(colorama.Fore.CYAN + "El promedio de IMC del paciente",I2M ,"es de bajo peso")
-    elif ((IMC2 >= 18) and (IMC2 < 25)):
-        print(colorama.Fore.GREEN + "El promedio de IMC del paciente",I2M ,"es de peso normal")
-    elif ((IMC2 >= 25) and (IMC2 < 30)):
-        print(colorama.Fore.MAGENTA + "El promedio de IMC del paciente",I2M ,"es de sobrepeso")
-    elif (IMC2 >= 30):
-        print(colorama.Fore.RED + "El promedio de IMC del paciente",I2M ,"es de obesidad")
+    def Estatura(es):
+        Est = []
+        aux = 0
+        for i in range(0, len(es), 1):
+            aux= int(es[i])
+            res= (aux % 1000)
+            Est = Est + [res / 100]
+        return Est
 
     
-    if (IMC3 < 18):
-        print(colorama.Fore.CYAN + "El promedio de IMC del paciente",I3M ,"es de bajo peso")
-    elif ((IMC3 >= 18) and (IMC3 < 25)):
-        print(colorama.Fore.GREEN + "El promedio de IMC del paciente",I3M ,"es de peso normal")
-    elif ((IMC3 >= 25) and (IMC3 < 30)):
-        print(colorama.Fore.MAGENTA + "El promedio de IMC del paciente",I3M ,"es de sobrepeso")
-    elif (IMC3 >= 30):
-        print(colorama.Fore.RED + "El promedio de IMC del paciente",I3M ,"es de obesidad")
+    def IMCP(es, pes):
+        IMC = []
+        for i in range(0, len(es), 1):
+            IMC = IMC + [pes[i] // (es[i]**2)]
+        return IMC
+    
+    def IMCmay(imc):
+        may = 0
+        for i in range(0, len(imc), 1):
+            if (imc[i] > may):
+                may = imc[i]
+        print(colorama.Fore.BLUE + "El IMC mayor es:", may)
+
+    def IMCmen(imc):
+        men = imc[0]
+        for i in range(0, len(imc), 1):
+            if (imc[i] < men):
+                men = imc[i]
+        print(colorama.Fore.YELLOW + "El IMC menor es:", men)
+
+    def IMCprom(imc):
+        sum = 0
+        for i in range(0, len(imc), 1):
+            num = imc[i]
+            sum = sum + num
+        prom = (sum / len(imc))
+        print(colorama.Fore.GREEN + "El Promedio de IMC es de:", prom)
 
 
-    if((IMC1 > IMC2) and (IMC1 > IMC3)):
-        print(colorama.Fore.MAGENTA + "El IMC mayor es: ", IMC1," del paciente ",I1M)
-    elif((IMC2 > IMC1) and (IMC2 > IMC3)):
-        print(colorama.Fore.LIGHTMAGENTA_EX + "El IMC mayor es: ", IMC2," del paciente ",I2M)
-    elif((IMC3 > IMC1) and (IMC3 > IMC2)):
-        print(colorama.Fore.RED + "El IMC mayor es: ", IMC3," del paciente ",I3M)
+    def IMCPaciente(nom, imc):
+        for i in range(0, len(imc), 1):
+            print(colorama.Fore.MAGENTA + "Paciente:", nom[i], "su IMC es:", imc[i])
 
 
-    if((IMC1 < IMC2) and (IMC1 < IMC3)):
-        print(colorama.Fore.YELLOW + "El IMC menor es: ", IMC1," del paciente ",I1M)
-    elif((IMC2 < IMC1) and (IMC2 < IMC3)):
-        print(colorama.Fore.LIGHTYELLOW_EX + "El IMC menor es: ", IMC2," del paciente ",I2M)
-    elif((IMC3 < IMC1) and (IMC3 < IMC2)):
-        print(colorama.Fore.CYAN + "El IMC menor es: ", IMC3," del paciente ",I3M)
+    def IMCfinal(nom, imc):
+        n = len(imc)
+        for i in range(n-1, 0, -1):
+            for j in range(i):
+                if imc[j] > imc[j + 1]:
+                    temp_imc = imc[j]
+                    imc[j] = imc[j + 1]
+                    imc[j + 1] = temp_imc
+                    temp_nom = nom[j]
+                    nom[j] = nom[j + 1]
+                    nom[j + 1] = temp_nom
+        
+        arch = open("escribir direccion", "w")
+
+        for i in range(n):
+            arch.write(nom[i] + ": " + str(imc[i]) + "\n")
+        arch.close()
+        print(colorama.Fore.GREEN + "IMC ordenados guardados en Pacisal.txt")
+
+
+    lineas = LeerArchivo()
+    iniciales = []
+    datos = []
+    info = np.array([])
+
+    info = lineas
+
+    for i in range(0, len(info), 1):
+        if ((i % 2) == 0):
+            iniciales += [info[i].strip()]
+        else:
+            datos += [info[i].strip()]
+
+    IM = Iniciales(iniciales)
+    E = Estatura(datos)
+    P = Peso(datos)
+    IMC = IMCP(E, P)
+
+    IMCPaciente(IM, IMC)
+    IMCmay(IMC)
+    IMCmen(IMC)
+    IMCprom(IMC)
+    IMCfinal(IM, IMC)
 
 main()
